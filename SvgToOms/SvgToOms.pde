@@ -7,14 +7,24 @@ PrintWriter output;
 void setup() {
   size(200, 200);
   
+  String loadPath = selectInput();  // Opens file chooser
+    if (loadPath == null) {
+      // If a file was not selected
+      println("No file was selected...");
+    } else {
+      // If a file was selected, print path to file
+      println(loadPath);
+    }  
+  
+  
   // LOAD FILES AND OPEN WRITER
-  xml = new XMLElement(this, "castle8drawnbyhand2x.svg");
+  xml = new XMLElement(this, loadPath);
   int numSites = xml.getChildCount();
-  output = createWriter("castle8drawnbyhand2x.txt"); 
+  output = createWriter("data/file.oms"); 
   
   // WRITE OMS HEADER
-  output.println("AA LP0,0,0,0,0");
-  output.println("PP10000"); 
+  output.println("AA LP0,0,0,0,0");  
+  output.println("PP10000");    
 
   
   for (int i = 0; i < numSites; i++) {
@@ -46,7 +56,13 @@ void setup() {
   // CLOSE FILE
   output.flush(); // Writes the remaining data to the file
   output.close(); // Finishes the file
+  println("DONE!");
   exit(); // Stops the program
 
 
 }
+
+
+
+
+
