@@ -1,4 +1,14 @@
+/* //////////////////////////////////////////////////////////////////////
 
+  Marcelo Coelho
+  November 6, 2011
+  MIT Media Lab
+  
+  App for transforming SVG files into Resonetics toolpath.
+  
+  It only scans for simple lines in SVG and ignores paths and polylines.
+
+////////////////////////////////////////////////////////////////////////*/
 
 XMLElement xml;
 PrintWriter output;
@@ -20,7 +30,13 @@ void setup() {
   // LOAD FILES AND OPEN WRITER
   xml = new XMLElement(this, loadPath);
   int numSites = xml.getChildCount();
-  output = createWriter("data/file.oms"); 
+  
+  // EXTRACT FILE NAME
+  String[] fullPath = split(loadPath, '/');                     //split path
+  String[] filename = split(fullPath[fullPath.length-1], '.');  //split filename
+
+  // USE FILENAME TO CREATE OUTPUT FILE
+  output = createWriter("data/"+filename[0]+".oms"); 
   
   // WRITE OMS HEADER
   output.println("AA LP0,0,0,0,0");  
@@ -46,8 +62,25 @@ void setup() {
   output.println("WT100");
   output.println("CutAbs "+x2/1000+","+y2/1000);
 
+  ////// REPEAT TO MAKE THE CUT DEEPER /////////
+  // WRITE MOVE TO BEGINNING OF PATH
+  output.println("VL1.0,1.0");  
+  output.println("AC5.0,5.0");
+  output.println("MA"+x1/1000+","+y1/1000);
+  
+  // WRITE ETCHING PATH
+  output.println("VL0.1,0.1"); 
+  output.println("AC5.0,5.0");
+  output.println("WT100");
+  output.println("CutAbs "+x2/1000+","+y2/1000);
   
   }
+
+  // GO BACK TO ZERO
+  output.println("VL1.0,1.0");  
+  output.println("AC5.0,5.0");
+  output.println("MA0,0");
+
 
   // WRITE OMS FOOTER
   output.println("END");
